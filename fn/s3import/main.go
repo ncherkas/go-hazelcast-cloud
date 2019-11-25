@@ -30,7 +30,11 @@ func HandleRequest(ctx context.Context, s3Event events.S3Event) error {
 		return err
 	}
 
-	s3 := s3.New(session.New())
+	session, err := session.NewSession()
+	if err != nil {
+		return err
+	}
+	s3 := s3.New(session)
 	bucket := s3Event.Records[0].S3.Bucket.Name
 	key := s3Event.Records[0].S3.Object.Key
 

@@ -34,8 +34,12 @@ func ImportAirports(s3Client *s3.S3, bucket string, key string, airportsMap core
 		return fmt.Errorf("Failed to unmarshal the airports array: %w", err)
 	}
 
+	airportsByCode := make(map[interface{}]interface{})
 	for _, a := range airports {
-		airportsMap.Put(a.Code, &a)
+		airportsByCode[a.Code] = &a
+	}
+	if err := airportsMap.PutAll(airportsByCode); err != nil {
+		return fmt.Errorf("Failed to store the airports data: %w", err)
 	}
 
 	size, err := airportsMap.Size()
